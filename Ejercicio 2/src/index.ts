@@ -29,9 +29,9 @@ async function menu(): Promise<void>{
     console.log("4. Dividir");
     console.log("5. Salir");
     const opcion = await question("Elige una opcion: ");
-    await manejarOpcion(opcion);
+    await Opcion(opcion);
 }
-async function manejarOpcion(op: string): Promise<void>{
+async function Opcion(op: string): Promise<void>{
     switch (op){
         case "1":{
             const{a,b} = await pedirNumeros();
@@ -68,4 +68,5 @@ async function manejarOpcion(op: string): Promise<void>{
     }
     await menu();
 }
+
 menu();
