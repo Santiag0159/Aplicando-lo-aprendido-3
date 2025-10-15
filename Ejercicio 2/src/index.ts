@@ -1,67 +1,71 @@
 import readline from 'readline';
-
-import { Calculadora } from './Calculadora';
-
+import {Calculadora} from './Calculadora';
 const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout
 });
 const calculadora = new Calculadora();
-
-function menu(){
-    console.log("Calculadora en POO");
+function question(promt: string): Promise<string>{
+    return new Promise(resolve => {
+        rl.question(promt, resolve);
+    });
+}
+async function pedirNumeros(): Promise<{a: number, b: number}>{
+   const inputA = await question('Ingrese el primer numero: ');
+   const inputB = await question('Ingrese el segundo numero: ');
+   const a = parseFloat(inputA);
+   const b = parseFloat(inputB);
+   if (isNaN(a) || isNaN(b)){
+    console.log("Ingrese numeros validos");
+    return pedirNumeros();
+   }
+   return {a,b};
+}
+async function menu(): Promise<void>{
+    console.log("Calculadora POO");
     console.log("1. Sumar");
     console.log("2. Restar");
     console.log("3. Multiplicar");
     console.log("4. Dividir");
     console.log("5. Salir");
-    rl.question("Elige una opción: ", opcion);
+    const opcion = await question("Elige una opcion: ");
+    await manejarOpcion(opcion);
 }
-function pedirNumeros(callback: (a: number, b: number)=> void) {
-    rl.question('Ingrese el primer numero: ',(inputA) =>{
-        rl.question('Ingrese el segundo numero: ',(inputB) =>{
-            const a = parseFloat(inputA);
-            const b = parseFloat(inputB);
-            if (isNaN(a) || isNaN(b)){
-                console.log("Ingrese un numero valido...");
-                menu();
-            } else {
-                callback(a, b);
-            }
-        });
-    });
-}
-function opcion (opcion: String){
-    switch (opcion){
-        case "1":
-            pedirNumeros((a, b) => {
-                console.log(`Resultado: ${calculadora.sumar(a, b)}`);
-                menu();
-            });
+async function manejarOpcion(op: string): Promise<void>{
+    switch (op){
+        case "1":{
+            const{a,b} = await pedirNumeros();
+            console.log(`Resultado: ${calculadora.sumar(a,b)}`);
             break;
-        case "2":
-            pedirNumeros((a, b) =>{
-                console.log(`Resultado: ${calculadora.restar(a, b)}`);
-            });
+        }
+        case "2":{
+            const{a,b} = await pedirNumeros();
+            console.log(`Resultado: ${calculadora.restar(a,b)}`);
             break;
-        case "3":
-            pedirNumeros((a, b) =>{
-                console.log(`Resultado: ${calculadora.multiplicar(a, b)}`);
-            });
+        }
+        case "3":{
+            const{a,b} =await pedirNumeros();
+            console.log(`Resultado: ${calculadora.multiplicar(a,b)}`);
             break;
-        case "4":
-            pedirNumeros((a, b) =>{
-                console.log(`Resultado: ${calculadora.dividir(a, b)}`);
-            });
-            break;
-        case "5":
+        }
+        case "4":{
+            const {a,b} = await pedirNumeros();
+            try{
+                const resultado = calculadora.dividir(a,b);
+                console.log(`Resultado: ${resultado}`);
+            } catch(error: any){
+                console.log(`Error: ${error.message}`);
+            } break;
+        }
+        case "5":{
             console.log("Saliendo...");
             rl.close();
-            break;
+            return;
+        }
         default:
-            console.log("Opcion invalida, intentente otra vez ");
-            menu();
+            console.log("Opcion invalida, intenta otra vez...");
             break;
     }
+    await menu();
 }
 menu();

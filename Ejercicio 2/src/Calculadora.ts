@@ -10,7 +10,7 @@ export class Calculadora {
     }
     dividir (a: number, b: number): number {
         if (b === 0) {
-            console.log("No se puede dividir por cero");
+            throw new Error("No se puede dividir por cero");
         }
         return a / b;
     }
