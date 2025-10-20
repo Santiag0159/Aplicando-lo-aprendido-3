@@ -10,6 +10,7 @@ function question(promt: string): Promise<string>{
         rl.question(promt, resolve);
     });
 }
+//Pedir numeros
 async function pedirNumeros(): Promise<{a: number, b: number}>{
    const inputA = await question('Ingrese el primer numero: ');
    const inputB = await question('Ingrese el segundo numero: ');
@@ -70,3 +71,4 @@ async function Opcion(op: string): Promise<void>{
 }
 
 menu();
+
